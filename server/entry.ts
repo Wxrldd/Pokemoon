@@ -1,5 +1,6 @@
 import { telefuncHandler } from "./telefunc-handler";
 import { apply, serve } from "@photonjs/express";
+import { registerPokemonHoverRoute } from "./routes/pokemonHoverRoute";
 import express from "express";
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
@@ -8,7 +9,7 @@ export default startApp() as unknown;
 
 function startApp() {
   const app = express();
-
+  registerPokemonHoverRoute(app);
   apply(app, [
     // Telefunc route. See https://telefunc.com
     telefuncHandler,
