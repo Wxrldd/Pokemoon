@@ -8,18 +8,18 @@ export default function Page() {
               Attrapez-les tous avec Pokemoon
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Découvrez l'univers complet des Pokémon, explorez leurs statistiques, 
+              Découvrez l'univers complet des Pokémon, explorez leurs statistiques,
               types et évolutions. Votre encyclopédie Pokémon interactive.
             </p>
             <div className="flex gap-4">
-              <a 
-                href="/pokedex" 
+              <a
+                href="/pokedex"
                 className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
               >
                 Explorer le Pokédex
               </a>
-              <a 
-                href="/register" 
+              <a
+                href="/subscribe"
                 className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold border-2 border-blue-600 hover:bg-blue-50 transition-colors"
               >
                 Créer un compte
@@ -27,9 +27,9 @@ export default function Page() {
             </div>
           </div>
           <div className="flex justify-center">
-            <img 
-              src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" 
-              alt="Pikachu" 
+            <img
+              src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
+              alt="Pikachu"
               className="w-96 h-96 object-contain"
             />
           </div>

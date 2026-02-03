@@ -17,7 +17,28 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "react"
+    "jsxImportSource": "react",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@components/*": [
+        "./components/*"
+      ],
+      "@pages/*": [
+        "./pages/*"
+      ],
+      "@utils/*": [
+        "./utils/*"
+      ],
+      "@assets/*": [
+        "./assets/*"
+      ],
+      "@prisma/*": [
+        "./prisma/*"
+      ]
+    },
   },
   "exclude": [
     "dist"

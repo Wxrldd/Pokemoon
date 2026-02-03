@@ -19,8 +19,8 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Logo />
         <div className="flex items-center gap-8">
-          <Link href="/register">Inscription</Link>
-          <Link href="/signin">Connexion</Link>
+          <Link href="/login">Login</Link>
+          <Link href="/subscribe">Subscribe</Link>
           <Link href="/pokedex">Pokédex</Link>
         </div>
       </div>
