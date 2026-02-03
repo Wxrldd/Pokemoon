@@ -9,9 +9,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className={"flex max-w-5xl m-auto"}>
       <Sidebar>
         <Logo />
-        <Link href="/">Welcome</Link>
-        <Link href="/todo">Todo</Link>
-        <Link href="/star-wars">Data Fetching</Link>
+        {/* a changer pour si non connecté */}
+        <Link href="/register">Register</Link>
+        <Link href="/signin">Sign In</Link>
+        
+        <Link href="/pokedex">Pokédex</Link>
       </Sidebar>
       <Content>{children}</Content>
     </div>
