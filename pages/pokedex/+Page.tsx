@@ -91,8 +91,8 @@ const TYPE_STYLE: Record<
     accent: "text-cyan-800",
   },
   dark: {
-    card: "border-slate-300 bg-slate-50/70",
-    badge: "bg-slate-200 text-slate-900",
+    card: "border-slate-600 bg-slate-400/70",
+    badge: "bg-slate-600 text-slate-900",
     bar: "bg-slate-700",
     accent: "text-slate-800",
   },

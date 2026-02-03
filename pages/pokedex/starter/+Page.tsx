@@ -83,7 +83,6 @@ export default function StarterSelectionPage() {
                 {(p.height / 10).toFixed(1)} m • {(p.weight / 10).toFixed(1)} kg
               </div>
 
-              {/* Stats */}
               <div className="mt-4 space-y-2">
                 <Stat label="HP" value={p.stats.hp} color={style.bar} />
                 <Stat label="Attaque" value={p.stats.attack} color={style.bar} />
