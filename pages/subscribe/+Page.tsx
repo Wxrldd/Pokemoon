@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { onSubscribe } from "./subscribe.telefunc";
+import validateData from "../../utils/validateData";
 
 export default function SubscribePage() {
   const [email, setEmail] = useState("");
@@ -18,6 +19,11 @@ export default function SubscribePage() {
     setErrors({});
     const data = await onSubscribe({ email, password });
     console.log("Data", data);
+    if (data.success) {
+      alert("User created successfully");
+    } else {
+      alert("Error creating user");
+    }
   };
 
   return (
@@ -159,31 +165,4 @@ export default function SubscribePage() {
       </div>
     </div>
   );
-}
-
-const validateEmail = (email: string) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-const validatePassword = (password: string) => {
-  return password.length >= 12 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[!@#$%^&*]/.test(password);
-};
-
-function validateData(data: { email: string; password: string }): { email?: string; password?: string } {
-  const errors: { email?: string; password?: string } = {};
-
-  if (!data.email) {
-    errors.email = "Email is required";
-  } else if (!validateEmail(data.email)) {
-    errors.email = "Please enter a valid email address";
-  }
-
-  if (!data.password) {
-    errors.password = "Password is required";
-  } else if (!validatePassword(data.password)) {
-    errors.password = "Password must be at least 12 characters and including at least one uppercase letter, one number and one special character";
-  }
-
-  return errors;
 }
