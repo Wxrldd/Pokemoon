@@ -1,37 +1,37 @@
 import "./Layout.css";
-
 import "./tailwind.css";
 import logoUrl from "../assets/logo.svg";
 import { Link } from "../components/Link";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={"flex max-w-5xl m-auto"}>
-      <Sidebar>
-        <Logo />
-        {/* a changer pour si non connecté */}
-        <Link href="/register">Register</Link>
-        <Link href="/signin">Sign In</Link>
-        
-        <Link href="/pokedex">Pokédex</Link>
-      </Sidebar>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
       <Content>{children}</Content>
+      <Footer />
     </div>
   );
 }
 
-function Sidebar({ children }: { children: React.ReactNode }) {
+function Navbar() {
   return (
-    <div id="sidebar" className={"p-5 flex flex-col shrink-0 border-r-2 border-r-gray-200"}>
-      {children}
-    </div>
+    <nav className="border-b border-gray-200 bg-white">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <Logo />
+        <div className="flex items-center gap-8">
+          <Link href="/register">Inscription</Link>
+          <Link href="/signin">Connexion</Link>
+          <Link href="/pokedex">Pokédex</Link>
+        </div>
+      </div>
+    </nav>
   );
 }
 
 function Content({ children }: { children: React.ReactNode }) {
   return (
-    <div id="page-container">
-      <div id="page-content" className={"p-5 pb-12 min-h-screen"}>
+    <div id="page-container" className="flex-1">
+      <div id="page-content">
         {children}
       </div>
     </div>
@@ -40,10 +40,23 @@ function Content({ children }: { children: React.ReactNode }) {
 
 function Logo() {
   return (
-    <div className={"p-5 mb-2"}>
-      <a href="/">
-        <img src={logoUrl} height={64} width={64} alt="logo" />
-      </a>
-    </div>
+    <a href="/" className="flex items-center gap-2">
+      <img src={logoUrl} height={48} width={48} alt="logo" />
+      <span className="text-xl font-bold">Pokemoon</span>
+    </a>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-gray-200 bg-gray-50 py-6">
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <p className="text-sm text-gray-600">© 2025 Pokemoon</p>
+        <div className="flex gap-6">
+          <Link href="/contact">Contact</Link>
+          <Link href="/mention-legales">Mentions légales</Link>
+        </div>
+      </div>
+    </footer>
   );
 }
