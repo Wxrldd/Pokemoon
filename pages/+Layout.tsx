@@ -27,15 +27,16 @@ function Navbar() {
           {user ? (
             <>
               <span className="text-sm text-gray-700">Hello, {user.pseudo}</span>
-              <Link href="/pokedex">Pokédex</Link>
+              {/* logout route */}
             </>
           ) : (
             <>
               <Link href="/login">Login</Link>
               <Link href="/subscribe">Subscribe</Link>
-              <Link href="/pokedex">Pokédex</Link>
             </>
           )}
+          <Link href="/pokedex">Pokédex</Link>
+          <Link href="/random">Random Encounter</Link>
         </div>
       </div>
     </nav>
