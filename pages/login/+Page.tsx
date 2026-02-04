@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { onLogin } from "./login.telefunc";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,7 +12,7 @@ export default function LoginPage() {
     return emailRegex.test(email);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: { email?: string; password?: string } = {};
 
@@ -31,9 +32,16 @@ export default function LoginPage() {
     }
 
     setErrors({});
-    alert("Welcome back, Trainer! You're logged in.");
-    setEmail("");
-    setPassword("");
+    const data = await onLogin({ email, password });
+    console.log("Login data", data);
+    if (data.success) {
+      alert("Welcome back, Trainer! You're logged in successfully.");
+      setEmail("");
+      setPassword("");
+    } else {
+      alert(data.error || "Error logging in");
+      setErrors({ password: data.error || "Invalid credentials" });
+    }
   };
 
   return (

@@ -6,7 +6,7 @@ export async function onSubscribe(data: { email: string; password: string }) {
   const prisma = new PrismaClient({
     datasourceUrl: process.env.DATABASE_URL,
   });
-  console.log("Côté backend", data);
+  console.log("SUBSCRIBE DATA", data);
   try {
     const hashedPassword = await argon2.hash(data.password);
     console.log("Hashed password", hashedPassword);
