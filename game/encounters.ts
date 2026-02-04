@@ -10,98 +10,90 @@ export type AreaEncounters = {
   slots: EncounterSlot[];
 };
 
-export const ENCOUNTERS: Record<string, AreaEncounters> = {
-  "route-101": {
-    encounterRate: 0.18,
-    slots: [
-      { name: "Chenipotte", weight: 60, minLevel: 2, maxLevel: 4 },
-      { name: "Zigzaton", weight: 40, minLevel: 2, maxLevel: 4 },
-    ],
-  },
-  "route-102": {
-    encounterRate: 0.2,
-    slots: [
-      { name: "Chenipotte", weight: 35, minLevel: 2, maxLevel: 5 },
-      { name: "Nirondelle", weight: 25, minLevel: 2, maxLevel: 5 },
-      { name: "Rattata", weight: 15, minLevel: 2, maxLevel: 5 },
-      { name: "Zigzaton", weight: 25, minLevel: 2, maxLevel: 5 },
-    ],
-  },
-  "route-103": {
-    encounterRate: 0.2,
-    slots: [
-      { name: "Chenipotte", weight: 45, minLevel: 2, maxLevel: 5 },
-      { name: "Nirondelle", weight: 30, minLevel: 2, maxLevel: 5 },
-      { name: "Zigzaton", weight: 25, minLevel: 2, maxLevel: 5 },
-    ],
-  },
+const API = "https://pokeapi.co/api/v2";
 
-  "foret-de-jade": {
-    encounterRate: 0.25,
-    slots: [
-      { name: "Chenipotte", weight: 20, minLevel: 3, maxLevel: 6 },
-      { name: "Blindalys", weight: 12, minLevel: 5, maxLevel: 7 },
-      { name: "Armulys", weight: 12, minLevel: 5, maxLevel: 7 },
-      { name: "Mystherbe", weight: 20, minLevel: 3, maxLevel: 6 },
-      { name: "Pikachu", weight: 6, minLevel: 4, maxLevel: 6 },
-      { name: "Parecool", weight: 30, minLevel: 3, maxLevel: 6 },
-    ],
-  },
+type NamedAPIResource = { name: string; url: string };
 
-  "route-111": {
-    encounterRate: 0.18,
-    slots: [
-      { name: "Sabelette", weight: 40, minLevel: 10, maxLevel: 14 },
-      { name: "Medhyèna", weight: 35, minLevel: 10, maxLevel: 14 },
-      { name: "Nirondelle", weight: 25, minLevel: 10, maxLevel: 14 },
-    ],
-  },
-  desert: {
-    encounterRate: 0.22,
-    slots: [
-      { name: "Cacnea", weight: 28, minLevel: 14, maxLevel: 18 },
-      { name: "Balbuto", weight: 22, minLevel: 14, maxLevel: 18 },
-      { name: "Kraknoix", weight: 20, minLevel: 14, maxLevel: 18 },
-      { name: "Anorith", weight: 15, minLevel: 20, maxLevel: 25 },
-      { name: "Lilia", weight: 15, minLevel: 20, maxLevel: 25 },
-    ],
-  },
-
-  "routes-marines": {
-    encounterRate: 0.12,
-    slots: [
-      { name: "Tentacool", weight: 55, minLevel: 15, maxLevel: 25 },
-      { name: "Tentacruel", weight: 10, minLevel: 25, maxLevel: 35 },
-      { name: "Wingull", weight: 25, minLevel: 15, maxLevel: 25 },
-      { name: "Pelipper", weight: 10, minLevel: 25, maxLevel: 35 },
-    ],
-  },
-  plongee: {
-    encounterRate: 0.1,
-    slots: [
-      { name: "Relicanth", weight: 10, minLevel: 25, maxLevel: 35 },
-      { name: "Coquiperl", weight: 35, minLevel: 20, maxLevel: 30 },
-      { name: "Wailmer", weight: 35, minLevel: 20, maxLevel: 30 },
-      { name: "Chinchou", weight: 20, minLevel: 20, maxLevel: 30 },
-    ],
-  },
-
-  "route-victoire": {
-    encounterRate: 0.22,
-    slots: [
-      { name: "Onix", weight: 20, minLevel: 35, maxLevel: 45 },
-      { name: "Golbat", weight: 25, minLevel: 35, maxLevel: 45 },
-      { name: "Hariyama", weight: 15, minLevel: 38, maxLevel: 48 },
-      { name: "Makuhita", weight: 20, minLevel: 35, maxLevel: 42 },
-      { name: "Meditikka", weight: 20, minLevel: 35, maxLevel: 45 },
-    ],
-  },
-  "tour-celeste": {
-    encounterRate: 0.18,
-    slots: [
-      { name: "Altaria", weight: 15, minLevel: 35, maxLevel: 45 },
-      { name: "Nosferapti", weight: 80, minLevel: 25, maxLevel: 35 },
-      { name: "Rayquaza", weight: 5, minLevel: 70, maxLevel: 70 },
-    ],
-  },
+type LocationArea = {
+  encounter_method_rates: Array<{
+    encounter_method: NamedAPIResource;
+    version_details: Array<{
+      rate: number;
+      version: NamedAPIResource;
+    }>;
+  }>;
+  pokemon_encounters: Array<{
+    pokemon: NamedAPIResource;
+    version_details: Array<{
+      version: NamedAPIResource;
+      encounter_details: Array<{
+        min_level: number;
+        max_level: number;
+        chance: number;
+        method: NamedAPIResource;
+        condition_values: NamedAPIResource[];
+      }>;
+    }>;
+  }>;
 };
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+
+export async function getAreaEncountersFromPokeAPI(opts: {
+  areaName: string;
+  version: string;
+  method: string;
+  ignoreConditional?: boolean;
+}): Promise<AreaEncounters> {
+  const { areaName, version, method, ignoreConditional = true } = opts;
+
+  const area = await fetchJson<LocationArea>(`${API}/location-area/${areaName}/`);
+
+  const rate =
+    area.encounter_method_rates
+      .find((m) => m.encounter_method.name === method)
+      ?.version_details.find((v) => v.version.name === version)?.rate ?? 0;
+
+  const byPokemon = new Map<
+    string,
+    { weight: number; minLevel: number; maxLevel: number }
+  >();
+
+  for (const pe of area.pokemon_encounters) {
+    const vd = pe.version_details.find((v) => v.version.name === version);
+    if (!vd) continue;
+
+    const details = vd.encounter_details.filter(
+      (d) =>
+        d.method.name === method &&
+        (!ignoreConditional || d.condition_values.length === 0)
+    );
+
+    if (details.length === 0) continue;
+
+    const weight = details.reduce((s, d) => s + d.chance, 0);
+    const minLevel = Math.min(...details.map((d) => d.min_level));
+    const maxLevel = Math.max(...details.map((d) => d.max_level));
+
+    const prev = byPokemon.get(pe.pokemon.name);
+    byPokemon.set(pe.pokemon.name, {
+      weight: (prev?.weight ?? 0) + weight,
+      minLevel: prev ? Math.min(prev.minLevel, minLevel) : minLevel,
+      maxLevel: prev ? Math.max(prev.maxLevel, maxLevel) : maxLevel,
+    });
+  }
+
+  return {
+    encounterRate: rate / 100,
+    slots: [...byPokemon.entries()].map(([name, v]) => ({
+      name,
+      weight: v.weight,
+      minLevel: v.minLevel,
+      maxLevel: v.maxLevel,
+    })),
+  };
+}
