@@ -6,6 +6,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,14 +33,15 @@ export default function LoginPage() {
     }
 
     setErrors({});
+    setAlertMessage(null);
     const data = await onLogin({ email, password });
     console.log("Login data", data);
     if (data.success) {
-      alert("Welcome back, Trainer! You're logged in successfully.");
       setEmail("");
       setPassword("");
+      setAlertMessage(null);
     } else {
-      alert(data.error || "Error logging in");
+      setAlertMessage("Identifiants invalides");
       setErrors({ password: data.error || "Invalid credentials" });
     }
   };
@@ -64,6 +66,11 @@ export default function LoginPage() {
 
           {/* Form Content */}
           <div className="bg-white px-8 py-8">
+            {alertMessage && (
+              <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+                <span className="font-medium">{alertMessage}</span>
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Field */}
               <div>

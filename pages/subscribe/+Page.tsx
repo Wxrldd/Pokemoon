@@ -20,7 +20,7 @@ export default function SubscribePage() {
     const data = await onSubscribe({ email, password });
     console.log("Data", data);
     if (data.success) {
-      alert("User created successfully");
+      window.location.href = "/pokedex/starter";
     } else {
       alert("Error creating user");
     }
