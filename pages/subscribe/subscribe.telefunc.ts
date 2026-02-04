@@ -1,11 +1,9 @@
 const argon2 = require('argon2');
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../server/db';
+import { generateToken } from '../../server/jwt';
+import { setAuthTokenCookie } from '../../server/auth-utils';
 
-
-export async function onSubscribe(data: { email: string; password: string }) {
-  const prisma = new PrismaClient({
-    datasourceUrl: process.env.DATABASE_URL,
-  });
+export async function onSubscribe(data: { email: string; password: string; pseudo: string }) {
   console.log("SUBSCRIBE DATA", data);
   try {
     const hashedPassword = await argon2.hash(data.password);
@@ -14,12 +12,22 @@ export async function onSubscribe(data: { email: string; password: string }) {
       data: {
         email: data.email,
         password: hashedPassword,
+        pseudo: data.pseudo,
       },
     });
     console.log("User created", user);
-    return { success: true, user };
+
+    // Generate JWT token
+    const token = await generateToken(user.id, user.email, user.pseudo);
+    console.log("Token generated", token);
+
+    // Set httpOnly cookie
+    setAuthTokenCookie(token);
+
+    const { password: _, ...userWithoutPassword } = user;
+    return { success: true, user: userWithoutPassword };
   } catch (error) {
-    console.error("Error hashing password", error);
-    return { success: false, error: "Error hashing password" };
+    console.error("Error creating user", error);
+    return { success: false, error: "Error creating user" };
   }
 }

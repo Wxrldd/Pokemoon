@@ -1,16 +1,16 @@
 const argon2 = require('argon2');
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../server/db';
+import { generateToken } from '../../server/jwt';
+import { setAuthTokenCookie } from '../../server/auth-utils';
 
-export async function onLogin(data: { email: string; password: string }) {
-    const prisma = new PrismaClient({
-        datasourceUrl: process.env.DATABASE_URL,
-    });
+export async function onLogin(data: { email: string; password: string; pseudo: string }) {
     console.log("LOGIN DATA", data);
     try {
         // Find user by email
         const user = await prisma.user.findFirst({
             where: {
                 email: data.email,
+                pseudo: data.pseudo,
             },
         });
 
@@ -26,6 +26,12 @@ export async function onLogin(data: { email: string; password: string }) {
         if (!isValidPassword) {
             return { success: false, error: "Invalid password !" };
         }
+
+        // Generate JWT token
+        const token = await generateToken(user.id, user.email, user.pseudo);
+
+        // Set httpOnly cookie
+        setAuthTokenCookie(token);
 
         // Return user data (without password)
         const { password: _, ...userWithoutPassword } = user;
