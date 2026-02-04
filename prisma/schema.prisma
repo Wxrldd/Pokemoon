@@ -11,9 +11,29 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  pokedollars Int      @default(3000)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  teamPokemons TeamPokemon[]
+}
+
+model TeamPokemon {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  speciesName String
+  nickname    String?
+  level       Int      @default(5)
+  currentHP   Int
+  maxHP       Int
+  position    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, position])
+  @@index([userId])
 }

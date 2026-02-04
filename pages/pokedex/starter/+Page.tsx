@@ -1,5 +1,6 @@
 import { usePageContext } from "vike-react/usePageContext";
 import type { Data } from "./+data";
+import { selectStarter } from "./StarterSelection.telefunc";
 
 const TYPE_STYLES: Record<
   string,
@@ -33,6 +34,25 @@ const TYPE_STYLES: Record<
 export default function StarterSelectionPage() {
   const pageContext = usePageContext();
   const { starters } = pageContext.data as Data;
+
+
+  const handlerSelectStarter = async (pokemonId: number, pokemonName: string) => {
+    try {
+      // Ici récupérer le vrai ID user une fois auth terminée
+      const userId= 1;
+      console.log(`Tentative de sélection du starter: ${pokemonName} (ID: ${pokemonId})`);
+
+      const result = await selectStarter(pokemonId, userId);
+
+      if(result.success) {
+        console.log(`Starter ${pokemonName} sélectionné avec succès !`);
+        alert(`Tu as choisi ${pokemonName} !`);
+        // Ici rediriger vers la page game
+      }
+    } catch (error) {
+      console.error("Erreur lors de la sélection du starter:", error);
+    }
+  };
 
   return (
     <div>
