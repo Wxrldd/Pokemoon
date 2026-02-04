@@ -7,12 +7,12 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL") // Pas d'erreur
 }
 
 model User {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
+  email     String
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
