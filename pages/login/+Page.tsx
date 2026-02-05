@@ -1,17 +1,20 @@
 import { useState } from "react";
+import { onLogin } from "./login.telefunc";
+import { navigate } from "vike/client/router";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: { email?: string; password?: string } = {};
 
@@ -31,9 +34,18 @@ export default function LoginPage() {
     }
 
     setErrors({});
-    alert("Welcome back, Trainer! You're logged in.");
-    setEmail("");
-    setPassword("");
+    setAlertMessage(null);
+    const data = await onLogin({ email, password });
+    console.log("Login data", data);
+    if (data.success) {
+      setEmail("");
+      setPassword("");
+      setAlertMessage(null);
+      navigate("/pokedex");
+    } else {
+      setAlertMessage("Identifiants invalides");
+      setErrors({ password: data.error || "Invalid credentials" });
+    }
   };
 
   return (
@@ -56,6 +68,11 @@ export default function LoginPage() {
 
           {/* Form Content */}
           <div className="bg-white px-8 py-8">
+            {alertMessage && (
+              <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+                <span className="font-medium">{alertMessage}</span>
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Field */}
               <div>

@@ -1,23 +1,31 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { onSubscribe } from "./subscribe.telefunc";
+import validateData from "../../utils/validateData";
+import { navigate, reload } from "vike/client/router";
 
 export default function SubscribePage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [pseudo, setPseudo] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string; pseudo?: string }>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors = validateData({ email, password });
+    const newErrors = validateData({ email, password, pseudo });
     console.log("New errors", newErrors);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
     setErrors({});
-    const data = await onSubscribe({ email, password });
+    const data = await onSubscribe({ email, password, pseudo });
     console.log("Data", data);
+    if (data.success) {
+      navigate("/pokedex/starter");
+    } else {
+      alert("Error creating user");
+    }
   };
 
   return (
@@ -121,6 +129,27 @@ export default function SubscribePage() {
                 </p>
               </div>
 
+              {/* Pseudo Field */}
+              <div>
+                <label
+                  htmlFor="pseudo"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="text-red-600">👤</span>
+                    Pseudo
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  id="pseudo"
+                  value={pseudo}
+                  onChange={(e) => setPseudo(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors"
+                  placeholder="Enter your pseudo"
+                />
+              </div>
+
               {/* Submit Button */}
               <button
                 type="submit"
@@ -159,31 +188,4 @@ export default function SubscribePage() {
       </div>
     </div>
   );
-}
-
-const validateEmail = (email: string) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-const validatePassword = (password: string) => {
-  return password.length >= 12 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[!@#$%^&*]/.test(password);
-};
-
-function validateData(data: { email: string; password: string }): { email?: string; password?: string } {
-  const errors: { email?: string; password?: string } = {};
-
-  if (!data.email) {
-    errors.email = "Email is required";
-  } else if (!validateEmail(data.email)) {
-    errors.email = "Please enter a valid email address";
-  }
-
-  if (!data.password) {
-    errors.password = "Password is required";
-  } else if (!validatePassword(data.password)) {
-    errors.password = "Password must be at least 12 characters and including at least one uppercase letter, one number and one special character";
-  }
-
-  return errors;
 }
