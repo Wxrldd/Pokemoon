@@ -5,12 +5,12 @@ import BattlePage from "../../components/BattlePage";
 
 export default function Page() {
   const playerTeamNames = useMemo(
-    () => ["Aggron", "kyogre", "salamence"],
+    () => ["silcoon", "cascoon", "surskit"],
     []
   );
 
   const enemyTeamNames = useMemo(
-    () => ["rayquaza", "pidgey", "rayquaza"],
+    () => ["deoxys-attack", "deoxys-defense", "deoxys-speed"],
     []
   );
 
