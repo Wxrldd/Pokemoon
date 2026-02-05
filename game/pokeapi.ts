@@ -51,3 +51,82 @@ export async function getPokemonImage(pokemonName: string): Promise<string | nul
   const fallback = data.sprites?.front_default ?? null;
   return official ?? fallback;
 }
+
+export type PokemonStats = {
+  hp: number;
+  attack: number;
+  defense: number;
+  "special-attack": number;
+  "special-defense": number;
+  speed: number;
+};
+
+export type PokemonBattleMove = {
+  name: string;
+  url: string;
+};
+
+export type PokemonDetails = {
+  name: string;
+  sprites: {
+    front_default: string | null;
+    other?: { ["official-artwork"]?: { front_default: string | null } };
+  };
+  stats: Array<{ base_stat: number; stat: { name: string } }>;
+  types: Array<{ type: { name: string } }>;
+  moves: Array<{
+    move: { name: string; url: string };
+  }>;
+};
+
+export type MoveDetails = {
+  name: string;
+  accuracy: number | null;
+  power: number | null;
+  pp: number | null;
+  priority: number;
+  type: { name: string };
+  damage_class: { name: "physical" | "special" | "status" };
+  effect_entries: Array<{
+    effect: string;
+    short_effect: string;
+    language: { name: string };
+  }>;
+};
+
+export function pickEffectText(move: MoveDetails, prefer: "fr" | "en" = "fr") {
+  const pick =
+    move.effect_entries.find((e) => e.language.name === prefer) ??
+    move.effect_entries.find((e) => e.language.name === "en") ??
+    move.effect_entries[0];
+
+  return {
+    short: pick?.short_effect ?? "Aucun effet connu.",
+    full: pick?.effect ?? "Aucun effet connu.",
+  };
+}
+
+export async function getPokemonDetails(pokemonName: string): Promise<PokemonDetails> {
+  return fetchJson<PokemonDetails>(`${API}/pokemon/${pokemonName.toLowerCase()}/`);
+}
+
+export async function getMoveDetails(moveUrlOrName: string): Promise<MoveDetails> {
+  const url = moveUrlOrName.startsWith("http")
+    ? moveUrlOrName
+    : `${API}/move/${moveUrlOrName.toLowerCase()}/`;
+  return fetchJson<MoveDetails>(url);
+}
+
+export function toStatsMap(details: PokemonDetails): PokemonStats {
+  const map: any = {};
+  for (const s of details.stats) map[s.stat.name] = s.base_stat;
+  return map as PokemonStats;
+}
+
+export function getOfficialSprite(details: PokemonDetails): string | null {
+  return (
+    details.sprites?.other?.["official-artwork"]?.front_default ??
+    details.sprites?.front_default ??
+    null
+  );
+}

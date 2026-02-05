@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { usePageContext } from "vike-react/usePageContext";
+import { useData } from "vike-react/useData";
 import type { Data } from "./+data";
 
 type HoverStats = {
@@ -162,8 +162,8 @@ function useInView(options?: IntersectionObserverInit) {
 }
 
 export default function PokemonPage() {
-  const pageContext = usePageContext();
-  const { gen3Pokemon } = pageContext.data as Data;
+  const data = useData<Data>();
+  const { gen3Pokemon } = data;
 
   const [detailsMap, setDetailsMap] = useState<Record<string, HoverStats | undefined>>({});
   const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});
@@ -224,7 +224,7 @@ function LazyPokemonCard(props: {
   isLoading: boolean;
   onHover: () => void;
 }) {
-  const { pokemon: p, details, isLoading, onHover } = props;
+  const { pokemon: p, details, onHover } = props;
 
   const { ref, inView } = useInView({
     root: null,
@@ -239,10 +239,7 @@ function LazyPokemonCard(props: {
     return (
       <div
         ref={ref}
-        className={`
-          rounded-2xl border p-5
-          ${style.card}
-        `}
+        className={`rounded-2xl border p-5 ${style.card}`}
       >
         <div className="animate-pulse">
           <div className="w-full h-28 rounded-xl bg-black/10" />
@@ -264,12 +261,7 @@ function LazyPokemonCard(props: {
     <div
       ref={ref}
       onMouseEnter={onHover}
-      className={`
-        group relative overflow-hidden rounded-2xl border p-5
-        cursor-pointer transition-all duration-200
-        hover:shadow-xl hover:-translate-y-1 hover:scale-[1.05]
-        ${style.card}
-      `}
+      className={`group relative overflow-hidden rounded-2xl border p-5 cursor-pointer transition-all duration-200 hover:shadow-xl hover:-translate-y-1 hover:scale-[1.05] ${style.card}`}
     >
       <div className="pointer-events-none absolute -top-10 -right-10 h-28 w-28 rounded-full bg-black/5 blur-2xl opacity-0 group-hover:opacity-100 transition" />
 
@@ -305,22 +297,13 @@ function LazyPokemonCard(props: {
         </div>
       </div>
 
-      <div
-        className="
-          pointer-events-none absolute inset-0 p-5
-          bg-white/70 backdrop-blur-sm
-          opacity-0 group-hover:opacity-100
-          transition-opacity duration-200
-          flex flex-col justify-end
-        "
-      >
+      <div className="pointer-events-none absolute inset-0 p-5 bg-white/70 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-end">
         <div className="pointer-events-none rounded-2xl border bg-white/90 p-4 shadow-sm">
           <div className={`text-sm font-bold ${style.accent}`}>
             Stats
           </div>
 
-          {!details ? (<div></div>
-          ) : (
+          {details && (
             <div className="mt-3 space-y-2 text-sm">
               <Stat label="HP" value={details.stats.hp} barClass={style.bar} />
               <Stat label="Att." value={details.stats.attack} barClass={style.bar} />

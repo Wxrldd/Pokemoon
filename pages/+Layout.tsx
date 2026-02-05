@@ -23,7 +23,7 @@ function Navbar() {
           <Link href="/subscribe">Subscribe</Link>
           <Link href="/pokedex">Pokédex</Link>
           <Link href="/map">Map</Link>
-          <Link href="/random">Random Encounter</Link>
+          <Link href="/battle">Battle</Link>
         </div>
       </div>
     </nav>
