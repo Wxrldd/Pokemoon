@@ -36,6 +36,7 @@ function Navbar() {
             </>
           )}
           <Link href="/pokedex">Pokédex</Link>
+          <Link href="/map">Map</Link>
           <Link href="/random">Random Encounter</Link>
         </div>
       </div>
