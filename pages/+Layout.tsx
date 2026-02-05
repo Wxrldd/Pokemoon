@@ -2,6 +2,8 @@ import "./Layout.css";
 import "./tailwind.css";
 import logoUrl from "../assets/logo.svg";
 import { Link } from "../components/Link";
+import { usePageContext } from "vike-react/usePageContext";
+import type { Data } from "./+data";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,13 +16,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function Navbar() {
+  const pageContext = usePageContext();
+  const { user } = pageContext.data as Data;
+
   return (
     <nav className="border-b border-gray-200 bg-white">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Logo />
         <div className="flex items-center gap-8">
-          <Link href="/login">Login</Link>
-          <Link href="/subscribe">Subscribe</Link>
+          {user ? (
+            <>
+              <span className="text-sm text-gray-700">Hello, {user.pseudo}</span>
+              <Link href="/logout">Logout</Link>
+            </>
+          ) : (
+            <>
+              <Link href="/login">Login</Link>
+              <Link href="/subscribe">Subscribe</Link>
+            </>
+          )}
           <Link href="/pokedex">Pokédex</Link>
           <Link href="/map">Map</Link>
           <Link href="/battle">Battle</Link>
