@@ -38,7 +38,6 @@ export default function StarterSelectionPage() {
 
   const handlerSelectStarter = async (pokemonId: number, pokemonName: string) => {
     try {
-      // Ici récupérer le vrai ID user une fois auth terminée
       const userId= 1;
       console.log(`Tentative de sélection du starter: ${pokemonName} (ID: ${pokemonId})`);
 
@@ -47,7 +46,6 @@ export default function StarterSelectionPage() {
       if(result.success) {
         console.log(`Starter ${pokemonName} sélectionné avec succès !`);
         alert(`Tu as choisi ${pokemonName} !`);
-        // Ici rediriger vers la page game
       }
     } catch (error) {
       console.error("Erreur lors de la sélection du starter:", error);

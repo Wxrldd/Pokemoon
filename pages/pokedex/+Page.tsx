@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useData } from "vike-react/useData";
 import type { Data } from "./+data";
+import { usePageContext } from "vike-react/usePageContext";
 
 type HoverStats = {
   id: number;
@@ -164,7 +165,10 @@ function useInView(options?: IntersectionObserverInit) {
 export default function PokemonPage() {
   const data = useData<Data>();
   const { gen3Pokemon } = data;
+  const user = usePageContext.user;
 
+  console.log(user)
+  
   const [detailsMap, setDetailsMap] = useState<Record<string, HoverStats | undefined>>({});
   const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});
   const hoverTimer = useRef<number | null>(null);
