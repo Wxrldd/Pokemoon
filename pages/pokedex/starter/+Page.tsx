@@ -1,5 +1,5 @@
 import { usePageContext } from "vike-react/usePageContext";
-import type { Data } from "./+data";
+import type { Data } from "./../../+data";
 import { selectStarter } from "./StarterSelection.telefunc";
 
 const TYPE_STYLES: Record<
