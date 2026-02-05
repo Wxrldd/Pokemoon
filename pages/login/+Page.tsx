@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { onLogin } from "./login.telefunc";
+import { navigate } from "vike/client/router";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -40,6 +41,7 @@ export default function LoginPage() {
       setEmail("");
       setPassword("");
       setAlertMessage(null);
+      navigate("/pokedex");
     } else {
       setAlertMessage("Identifiants invalides");
       setErrors({ password: data.error || "Invalid credentials" });

@@ -3,14 +3,13 @@ import { prisma } from '../../server/db';
 import { generateToken } from '../../server/jwt';
 import { setAuthTokenCookie } from '../../server/auth-utils';
 
-export async function onLogin(data: { email: string; password: string; pseudo: string }) {
+export async function onLogin(data: { email: string; password: string; }) {
     console.log("LOGIN DATA", data);
     try {
         // Find user by email
         const user = await prisma.user.findFirst({
             where: {
                 email: data.email,
-                pseudo: data.pseudo,
             },
         });
 

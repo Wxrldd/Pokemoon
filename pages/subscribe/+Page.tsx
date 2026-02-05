@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { onSubscribe } from "./subscribe.telefunc";
 import validateData from "../../utils/validateData";
+import { navigate, reload } from "vike/client/router";
 
 export default function SubscribePage() {
   const [email, setEmail] = useState("");
@@ -21,7 +22,7 @@ export default function SubscribePage() {
     const data = await onSubscribe({ email, password, pseudo });
     console.log("Data", data);
     if (data.success) {
-      window.location.href = "/pokedex/starter";
+      navigate("/pokedex/starter");
     } else {
       alert("Error creating user");
     }

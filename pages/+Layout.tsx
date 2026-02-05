@@ -27,7 +27,7 @@ function Navbar() {
           {user ? (
             <>
               <span className="text-sm text-gray-700">Hello, {user.pseudo}</span>
-              {/* logout route */}
+              <Link href="/logout">Logout</Link>
             </>
           ) : (
             <>
