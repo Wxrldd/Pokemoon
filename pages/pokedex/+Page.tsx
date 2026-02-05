@@ -164,6 +164,7 @@ function useInView(options?: IntersectionObserverInit) {
 export default function PokemonPage() {
   const data = useData<Data>();
   const { gen3Pokemon } = data;
+  console.log("DATA in Pokedex page", data);
 
   const [detailsMap, setDetailsMap] = useState<Record<string, HoverStats | undefined>>({});
   const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});

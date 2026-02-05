@@ -18,6 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 function Navbar() {
   const pageContext = usePageContext();
   const { user } = pageContext.data as Data;
+  console.log("USER in Navbar", user);
 
   return (
     <nav className="border-b border-gray-200 bg-white">
@@ -27,6 +28,8 @@ function Navbar() {
           {user ? (
             <>
               <span className="text-sm text-gray-700">Hello, {user.pseudo}</span>
+              <Link href="/map">Map</Link>
+              <Link href="/battle">Battle</Link>
               <Link href="/logout">Logout</Link>
             </>
           ) : (
@@ -36,8 +39,6 @@ function Navbar() {
             </>
           )}
           <Link href="/pokedex">Pokédex</Link>
-          <Link href="/map">Map</Link>
-          <Link href="/battle">Battle</Link>
         </div>
       </div>
     </nav>
