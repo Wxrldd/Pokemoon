@@ -42,6 +42,7 @@ function Navbar() {
               <span className="text-sm text-gray-700">Hello, {user.email}</span>
               <Link href="/map">Map</Link>
               <Link href="/battle">Battle</Link>
+              <Link href="/team">Gérer mon équipe</Link>
               <button
                 onClick={handleLogout}
               >
@@ -84,11 +85,7 @@ function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-gray-50 py-6">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <p className="text-sm text-gray-600">© 2025 Pokemoon</p>
-        <div className="flex gap-6">
-          <Link href="/contact">Contact</Link>
-          <Link href="/mention-legales">Mentions légales</Link>
-        </div>
+        <p className="text-sm text-gray-600">2026 Pokemoon By Thibaud, Killian & Maxime</p>
       </div>
     </footer>
   );
