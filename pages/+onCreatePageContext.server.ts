@@ -18,7 +18,7 @@ export async function onCreatePageContext(pageContext: PageContextServer) {
         console.log("Page context", pageContext);
     } catch (error) {
         const res = pageContext.runtime.res as Response;
-        res.clearCookie("auth_token");
+        res.clearCookie("auth-token");
         console.error(error);
     }
 }

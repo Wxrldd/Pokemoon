@@ -13,7 +13,7 @@
   p {
     @apply mb-2 mt-2;
   }
-  a {
-    @apply text-blue-600 hover:text-pink-400 visited:text-blue-900;
+  a, button {
+    @apply text-blue-600 hover:text-pink-400 visited:text-blue-900 cursor-pointer;
   }
 }
