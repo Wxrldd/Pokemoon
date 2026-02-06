@@ -5,7 +5,7 @@ import BattlePage from "../../components/BattlePage";
 
 export default function Page() {
   const playerTeamNames = useMemo(
-    () => ["silcoon", "cascoon", "surskit"],
+    () => ["deoxys-speed", "cascoon", "surskit"],
     []
   );
 
