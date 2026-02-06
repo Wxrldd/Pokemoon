@@ -33,8 +33,8 @@ function Navbar() {
   };
 
   return (
-    <nav className="border-b border-gray-200 bg-white">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <header className="border-b border-gray-200 bg-white">
+      <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Logo />
         <div className="flex items-center gap-8">
           {user ? (
@@ -56,19 +56,20 @@ function Navbar() {
             </>
           )}
           <Link href="/pokedex">Pokédex</Link>
+          <Link href="/leaderboard">Classement général</Link>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }
 
 function Content({ children }: { children: React.ReactNode }) {
   return (
-    <div id="page-container" className="flex-1">
+    <main id="page-container" className="flex-1">
       <div id="page-content">
         {children}
       </div>
-    </div>
+    </main>
   );
 }
 
