@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { onSubscribe } from "./subscribe.telefunc";
-import validateData from "../../utils/validateData";
+import { onSubscribe } from "./Subscribe.telefunc";
+import validateData from "../../validation/validateData";
 import { navigate } from "vike/client/router";
 
 export default function SubscribePage() {

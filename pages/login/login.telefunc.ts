@@ -1,11 +1,13 @@
 const argon2 = require('argon2');
-import { prisma } from '../../server/db';
+import { getPrisma } from '../../utils/getPrisma';
 import { generateToken } from '../../server/jwt';
 import { setAuthTokenCookie } from '../../server/auth-utils';
 
 export async function onLogin(data: { email: string; password: string; }) {
     console.log("LOGIN DATA", data);
     try {
+        const prisma = getPrisma();
+
         // Find user by email
         const user = await prisma.user.findFirst({
             where: {
@@ -18,10 +20,11 @@ export async function onLogin(data: { email: string; password: string; }) {
         }
 
         // Verify password
-        const isValidPassword = await argon2.verify(user.password, data.password); // hash auto
+        const isValidPassword = await argon2.verify(user.password, data.password);
         console.log("User password hash", user.password);
         console.log("Password to verify", data.password);
         console.log("Is valid password", isValidPassword);
+
         if (!isValidPassword) {
             return { success: false, error: "Invalid password !" };
         }

@@ -1,5 +1,5 @@
 import { listPokemon, type PokemonListItem } from "./../Pokedex.telefunc";
-import { PrismaClient } from '@prisma/client';
+import { getPrisma } from '../../../utils/getPrisma';
 
 type PokemonStat = {
   base_stat: number;
@@ -13,7 +13,7 @@ type PokemonDetail = {
   stats: PokemonStat[];
 }
 
-async function getPokemonData (names: string[]) {
+async function getPokemonData(names: string[]) {
   const allPokemon = await listPokemon(400, 0);
   const starterPokemon: PokemonListItem[] = [];
   for (const name of names) {
@@ -27,15 +27,13 @@ async function getPokemonData (names: string[]) {
   return starterPokemon;
 }
 
-export async function getStarterPokemon () {
+export async function getStarterPokemon() {
   const starterNames = ["Treecko", "Torchic", "Mudkip"];
   return getPokemonData(starterNames);
 }
 
 export async function selectStarter(pokemonId: number, userId: number) {
-  const prisma = new PrismaClient({
-    datasourceUrl: process.env.DATABASE_URL,
-  });
+  const prisma = getPrisma();
 
   try {
     const existingTeam = await prisma.teamPokemon.findFirst({
@@ -43,7 +41,7 @@ export async function selectStarter(pokemonId: number, userId: number) {
     });
 
     if (existingTeam) {
-      throw new Error("Tu as déjà choisi ton starter !");
+      return { success: false, error: "Tu as déjà choisi ton starter !" };
     }
 
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
@@ -68,6 +66,6 @@ export async function selectStarter(pokemonId: number, userId: number) {
     return { success: true };
   } catch (error) {
     console.error("Error selecting starter:", error);
-    throw error;
+    return { success: false, error: "Error selecting starter" };
   }
 }
