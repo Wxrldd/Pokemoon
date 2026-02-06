@@ -1,6 +1,6 @@
 import { verifyToken } from './jwt';
 
-export async function getCurrentUser(request: Request): Promise<{ userId: number; email: string; pseudo: string } | null> {
+export async function getCurrentUser(request: Request): Promise<{ userId: number; email: string; } | null> {
     // Get cookie from request
     const cookieHeader = request.headers.get('cookie');
     if (!cookieHeader) {

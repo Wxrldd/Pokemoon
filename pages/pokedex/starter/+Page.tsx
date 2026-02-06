@@ -1,146 +1,171 @@
 import { usePageContext } from "vike-react/usePageContext";
-import type { Data } from "./../../+data";
-import { selectStarter } from "./StarterSelection.telefunc";
+import { navigate } from "vike/client/router";
+import { useState, useEffect } from "react";
+import type { Data } from "../../+data";
+import { useStarterSelection } from "../../../hook/useStarterSelection";
 
-const TYPE_STYLES: Record<
-  string,
-  {
-    card: string;
-    badge: string;
-    bar: string;
-    button: string;
-  }
-> = {
-  grass: {
-    card: "bg-green-50 border-green-200",
-    badge: "bg-green-200 text-green-900",
-    bar: "bg-green-500",
-    button: "bg-green-600 hover:bg-green-700",
-  },
-  fire: {
-    card: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-200 text-orange-900",
-    bar: "bg-orange-500",
-    button: "bg-orange-600 hover:bg-orange-700",
-  },
-  water: {
-    card: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-200 text-blue-900",
-    bar: "bg-blue-500",
-    button: "bg-blue-600 hover:bg-blue-700",
-  },
-};
+const TYPE_COLORS = {
+  grass: "green",
+  fire: "orange",
+  water: "blue",
+} as const;
+
+type Step = "SELECT_STARTER" | "SET_NAME";
 
 export default function StarterSelectionPage() {
   const pageContext = usePageContext();
-  const { starters } = pageContext.data as Data;
+  const { starters, user } = pageContext.data as Data;
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user]);
 
-  const handlerSelectStarter = async (pokemonId: number, pokemonName: string) => {
-    try {
-      const userId= 1;
-      console.log(`Tentative de sélection du starter: ${pokemonName} (ID: ${pokemonId})`);
+  if (!user) {
+    return null;
+  }
 
-      const result = await selectStarter(pokemonId, userId);
+  const userId = user.userId;
 
-      if(result.success) {
-        console.log(`Starter ${pokemonName} sélectionné avec succès !`);
-        alert(`Tu as choisi ${pokemonName} !`);
-      }
-    } catch (error) {
-      console.error("Erreur lors de la sélection du starter:", error);
+  const [step, setStep] = useState<Step>("SELECT_STARTER");
+  const [selectedPokemon, setSelectedPokemon] = useState<{ id: number; name: string; type: string } | null>(null);
+  const [trainerName, setTrainerName] = useState("");
+
+  const { handleSelectStarter, handleSetTrainerName, isSelecting, error } = useStarterSelection(userId);
+
+  const handlePokemonSelect = async (pokemonId: number, pokemonName: string, type: string) => {
+    const result = await handleSelectStarter(pokemonId, pokemonName);
+    if (result.success) {
+      setSelectedPokemon({ id: pokemonId, name: pokemonName, type });
+      setStep("SET_NAME");
     }
   };
 
-  return (
-    <div>
-      <h1 className="text-2xl font-bold">Choisis ton starter</h1>
+  const handleNameSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = await handleSetTrainerName(trainerName);
+    if (result.success) {
+      alert(`Bienvenue ${trainerName}, tu commences avec ${selectedPokemon?.name} et 3000 PokéDollars !`);
+      navigate("/pokedex");
+    }
+  };
 
-      <ul className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3 list-none">
-        {starters.map((p) => {
-          const mainType = p.types[0];
-          const style = TYPE_STYLES[mainType];
+  if (step === "SET_NAME" && selectedPokemon) {
+    const color = TYPE_COLORS[selectedPokemon.type as keyof typeof TYPE_COLORS];
 
-          const imageUrl =
-            `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+          <h1 className="text-3xl font-bold text-center mb-6">Félicitations ! 🎉</h1>
 
-          return (
-            <li
-              key={p.id}
-              className={`
-                relative rounded-2xl border p-6
-                transition transform hover:-translate-y-1 hover:shadow-lg
-                ${style.card}
-              `}
+          <div className="text-center mb-6">
+            <img
+              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${selectedPokemon.id}.png`}
+              alt={selectedPokemon.name}
+              className="h-32 w-32 mx-auto"
+            />
+            <p className="mt-4 text-lg">Tu as choisi <strong className="capitalize">{selectedPokemon.name}</strong> !</p>
+          </div>
+
+          <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4 mb-6 text-center">
+            <p className="font-semibold">💰 Tu reçois 3000 PokéDollars !</p>
+          </div>
+
+          <form onSubmit={handleNameSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2">Choisis ton nom de dresseur</label>
+              <input
+                type="text"
+                value={trainerName}
+                onChange={(e) => setTrainerName(e.target.value)}
+                placeholder="Sacha, Ondine, Pierre..."
+                className="w-full px-4 py-2 border-2 rounded-lg focus:outline-none focus:border-blue-500"
+                minLength={3}
+                maxLength={20}
+                required
+                disabled={isSelecting}
+              />
+            </div>
+
+            {error && <div className="p-3 bg-red-100 border border-red-300 rounded text-red-800 text-sm">{error}</div>}
+
+            <button
+              type="submit"
+              disabled={isSelecting || trainerName.length < 3}
+              className={`w-full py-3 rounded-lg font-bold text-white bg-${color}-600 hover:bg-${color}-700 disabled:opacity-50`}
             >
-              <div className="flex justify-center">
-                <img
-                  src={imageUrl}
-                  alt={p.name}
-                  className="h-36 w-36 object-contain drop-shadow"
-                />
-              </div>
-
-              <div className="mt-3 text-center">
-                <div className="text-xs opacity-70">#{p.id}</div>
-                <div className="capitalize text-xl font-bold">{p.name}</div>
-
-                <div className="mt-2 flex justify-center gap-2">
-                  {p.types.map((t) => (
-                    <span
-                      key={t}
-                      className={`rounded-full px-3 py-1 text-xs capitalize ${style.badge}`}
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-3 text-xs text-center opacity-70">
-                {(p.height / 10).toFixed(1)} m • {(p.weight / 10).toFixed(1)} kg
-              </div>
-
-              <div className="mt-4 space-y-2">
-                <Stat label="HP" value={p.stats.hp} color={style.bar} />
-                <Stat label="Attaque" value={p.stats.attack} color={style.bar} />
-                <Stat label="Défense" value={p.stats.defense} color={style.bar} />
-                <Stat label="Vitesse" value={p.stats.speed} color={style.bar} />
-              </div>
-
-              <button
-                className={`mt-5 w-full rounded-xl px-4 py-2 text-white font-semibold transition ${style.button}`}
-                onClick={() => alert(`Tu as choisi ${p.name} !`)}
-              >
-                Choisir {p.name}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  color,
-}: {
-  label: string;
-  value: number;
-  color: string;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="w-16 text-xs">{label}</span>
-      <div className="flex-1 h-2 rounded bg-black/10">
-        <div
-          className={`h-2 rounded ${color}`}
-          style={{ width: `${Math.min(value, 100)}%` }}
-        />
+              {isSelecting ? "Enregistrement..." : "Commencer l'aventure !"}
+            </button>
+          </form>
+        </div>
       </div>
-      <span className="w-8 text-xs text-right">{value}</span>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-4xl font-bold text-center mb-2">Choisis ton Starter !</h1>
+        <p className="text-center text-gray-600 mb-8">Avec qui veux-tu commencer ton aventure ?</p>
+
+        {error && <div className="mb-6 p-4 bg-red-100 border border-red-300 rounded text-red-800 text-center">{error}</div>}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {starters.map((p) => {
+            const color = TYPE_COLORS[p.types[0] as keyof typeof TYPE_COLORS];
+
+            return (
+              <div key={p.id} className={`bg-white border-2 border-${color}-300 rounded-2xl p-6 hover:shadow-lg transition`}>
+                <img
+                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`}
+                  alt={p.name}
+                  className="h-32 w-32 mx-auto"
+                />
+
+                <div className="text-center mt-4">
+                  <p className="text-sm text-gray-500">#{p.id}</p>
+                  <h3 className="text-xl font-bold capitalize">{p.name}</h3>
+                  <div className="mt-2 flex justify-center gap-2">
+                    {p.types.map((t) => (
+                      <span key={t} className={`px-3 py-1 text-xs rounded-full bg-${color}-200 text-${color}-900 capitalize`}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-4 space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>PV</span>
+                    <span className="font-bold">{p.stats.hp}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Attaque</span>
+                    <span className="font-bold">{p.stats.attack}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Défense</span>
+                    <span className="font-bold">{p.stats.defense}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Vitesse</span>
+                    <span className="font-bold">{p.stats.speed}</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => handlePokemonSelect(p.id, p.name, p.types[0])}
+                  disabled={isSelecting}
+                  className={`mt-4 w-full py-2 rounded-lg font-bold text-white bg-${color}-600 hover:bg-${color}-700 disabled:opacity-50`}
+                >
+                  {isSelecting ? "⏳" : `Choisir ${p.name}`}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

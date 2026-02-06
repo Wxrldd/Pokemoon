@@ -25,7 +25,6 @@ declare global {
     interface PageContext {
       userId?: string; // ID de l'utilisateur connecté (undefined si non connecté)
       email?: string;
-      pseudo?: string;
       isAuthenticated: boolean; // Booléen comme témoin de connexion (calculé à partir de l'ID)
     }
   }
