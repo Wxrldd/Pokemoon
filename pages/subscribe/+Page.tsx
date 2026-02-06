@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { onSubscribe } from "./subscribe.telefunc";
-import validateData from "../../utils/validateData";
-import { navigate, reload } from "vike/client/router";
+import { onSubscribe } from "./Subscribe.telefunc";
+import validateData from "../../validation/validateData";
+import { navigate } from "vike/client/router";
 
 export default function SubscribePage() {
   const [email, setEmail] = useState("");
