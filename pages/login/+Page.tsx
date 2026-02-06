@@ -28,7 +28,7 @@ export default function LoginPage() {
       setEmail("");
       setPassword("");
       setAlertMessage(null);
-      navigate("/pokedex");
+      navigate("/map");
     } else {
       setAlertMessage("Identifiants invalides");
       setErrors({ password: data.error || "Invalid credentials" });

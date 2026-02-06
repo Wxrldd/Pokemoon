@@ -4,6 +4,8 @@ import logoUrl from "../assets/logo.svg";
 import { Link } from "../components/Link";
 import { usePageContext } from "vike-react/usePageContext";
 import type { Data } from "./+data";
+import { navigate } from "vike/client/router";
+import onLogout from "./layout.telefunc";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,6 +22,16 @@ function Navbar() {
   const { user } = pageContext.data as Data;
   console.log("USER in Navbar", user);
 
+  const handleLogout = async () => {
+    const userIsUnlogged = await onLogout();
+    if (userIsUnlogged.success) {
+      console.log("User is unlogged : ", user);
+      navigate("/");
+    } else {
+      alert(userIsUnlogged.error);
+    }
+  };
+
   return (
     <nav className="border-b border-gray-200 bg-white">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -30,7 +42,11 @@ function Navbar() {
               <span className="text-sm text-gray-700">Hello, {user.pseudo}</span>
               <Link href="/map">Map</Link>
               <Link href="/battle">Battle</Link>
-              <Link href="/logout">Logout</Link>
+              <button
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
             </>
           ) : (
             <>

@@ -16,3 +16,19 @@ export function setAuthTokenCookie(token: string): void {
         });
     }
 }
+
+/**
+ * Clears the auth-token cookie by setting it with maxAge: 0
+ */
+export function removeAuthTokenCookie(): void {
+    const cookieStore = (globalThis as any).__telefuncCookieStore as CookieStore | undefined;
+    if (cookieStore) {
+        cookieStore.set('auth-token', '', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 0,
+            path: '/',
+        });
+    }
+}
