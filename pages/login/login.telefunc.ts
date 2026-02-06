@@ -30,7 +30,7 @@ export async function onLogin(data: { email: string; password: string; }) {
         }
 
         // Generate JWT token
-        const token = await generateToken(user.id, user.email, user.pseudo);
+        const token = await generateToken(user.id, user.email);
 
         // Set httpOnly cookie
         setAuthTokenCookie(token);

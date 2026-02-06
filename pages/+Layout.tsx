@@ -27,7 +27,7 @@ function Navbar() {
         <div className="flex items-center gap-8">
           {user ? (
             <>
-              <span className="text-sm text-gray-700">Hello, {user.pseudo}</span>
+              <span className="text-sm text-gray-700">Hello, {user.email}</span>
               <Link href="/map">Map</Link>
               <Link href="/battle">Battle</Link>
               <Link href="/logout">Logout</Link>

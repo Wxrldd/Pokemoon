@@ -9,10 +9,9 @@ export async function onCreatePageContext(pageContext: PageContextServer) {
         if (!authToken) return;
         const user = await verifyToken(authToken);
         if (!user) return;
-        const { userId, email, pseudo } = user;
+        const { userId, email } = user;
         pageContext.userId = userId.toString();
         pageContext.email = email;
-        pageContext.pseudo = pseudo;
         pageContext.isAuthenticated = Boolean(userId);
         console.log("User authenticated", user);
         console.log("Page context", pageContext);

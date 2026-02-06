@@ -3,7 +3,7 @@ import { getPrisma } from '../../utils/getPrisma';
 import { generateToken } from '../../server/jwt';
 import { setAuthTokenCookie } from '../../server/auth-utils';
 
-export async function onSubscribe(data: { email: string; password: string; pseudo: string }) {
+export async function onSubscribe(data: { email: string; password: string; }) {
   console.log("SUBSCRIBE DATA", data);
   try {
     const prisma = getPrisma();
@@ -24,11 +24,10 @@ export async function onSubscribe(data: { email: string; password: string; pseud
       data: {
         email: data.email,
         password: hashedPassword,
-        pseudo: data.pseudo,
       },
     });
 
-    const token = await generateToken(newUser.id, newUser.email, newUser.pseudo);
+    const token = await generateToken(newUser.id, newUser.email);
 
     setAuthTokenCookie(token);
 
