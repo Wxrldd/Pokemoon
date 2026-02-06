@@ -3,7 +3,7 @@ CREATE TABLE "User" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "pseudo" TEXT NOT NULL,
+    "trainerName" TEXT,
     "pokedollars" INTEGER NOT NULL DEFAULT 3000,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
@@ -26,6 +26,9 @@ CREATE TABLE "TeamPokemon" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_trainerName_key" ON "User"("trainerName");
 
 -- CreateIndex
 CREATE INDEX "TeamPokemon_userId_idx" ON "TeamPokemon"("userId");

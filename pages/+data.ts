@@ -1,13 +1,11 @@
 import type { PageContextServer } from "vike/types";
 import { getCurrentUser } from "../server/auth";
-
 import { listPokemon, getPokemonByName } from "./pokedex/Pokedex.telefunc";
 import { getStarterPokemon } from "./pokedex/starter/StarterSelection.telefunc";
 
 export type User = {
   userId: number;
   email: string;
-  pseudo: string;
 };
 
 export type PokemonCardBase = {

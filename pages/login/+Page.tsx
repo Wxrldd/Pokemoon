@@ -12,9 +12,8 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors = validateData({ email, password, pseudo: "" });
-    delete newErrors.pseudo;
-
+    const newErrors = validateData({ email, password});
+    
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
