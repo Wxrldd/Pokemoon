@@ -3,8 +3,8 @@ import { getPrisma } from '../../utils/getPrisma';
 import { generateToken } from '../../server/jwt';
 import { setAuthTokenCookie } from '../../server/auth-utils';
 
-export async function onSubscribe(data: { email: string; password: string; }) {
-  console.log("SUBSCRIBE DATA", data);
+export async function onSignUp(data: { email: string; password: string; }) {
+  console.log("SIGN UP IN DATA", data);
   try {
     const prisma = getPrisma();
 

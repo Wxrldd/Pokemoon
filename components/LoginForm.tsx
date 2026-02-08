@@ -1,0 +1,180 @@
+import { useLogin } from "../hook/useLogin";
+import { navigate } from "vike/client/router";
+
+interface LoginFormProps {
+  onLoginFn: (data: { email: string; password: string }) => Promise<{ success: boolean; error?: string }>;
+}
+
+export default function LoginForm({ onLoginFn }: LoginFormProps) {
+  const {
+    email,
+    password,
+    errors,
+    isLoading,
+    showPassword,
+    alertMessage,
+    setEmail,
+    setPassword,
+    toggleShowPassword,
+    handleSubmit,
+  } = useLogin({
+    onSuccess: () => {
+      navigate("/map");
+    },
+    onError: (error) => {
+      console.error("Login error:", error);
+    },
+  });
+
+  return (
+    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center py-12 px-4">
+      <div className="w-full max-w-md">
+        <div className="bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-2xl shadow-2xl overflow-hidden border-4 border-yellow-400">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-8 text-center relative">
+            <div className="absolute top-4 right-4 w-12 h-12 bg-white rounded-full border-4 border-gray-800 flex items-center justify-center">
+              <div className="w-6 h-6 bg-gray-800 rounded-full"></div>
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-2 tracking-wide">
+              Welcome Back, Trainer!
+            </h1>
+            <p className="text-blue-100 text-sm">
+              Sign in to your Pokemon Universe account
+            </p>
+          </div>
+
+          <div className="bg-white px-8 py-8">
+            {alertMessage && (
+              <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+                <span className="font-medium">{alertMessage}</span>
+              </div>
+            )}
+
+            <form onSubmit={(e) => handleSubmit(e, onLoginFn)} className="space-y-6">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="text-red-600">✉</span>
+                    Email Address
+                  </span>
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`w-full px-4 py-3 rounded-lg border-2 ${errors.email
+                      ? "border-red-500 focus:border-red-600"
+                      : "border-gray-300 focus:border-blue-500"
+                    } focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors`}
+                  placeholder="trainer@pokemon.com"
+                  disabled={isLoading}
+                  aria-invalid={errors.email ? "true" : "false"}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                />
+                {errors.email && (
+                  <p id="email-error" className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <span>⚠</span>
+                    {errors.email}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="text-red-600">🔒</span>
+                    Password
+                  </span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={`w-full px-4 py-3 rounded-lg border-2 pr-12 ${errors.password
+                        ? "border-red-500 focus:border-red-600"
+                        : "border-gray-300 focus:border-blue-500"
+                      } focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors`}
+                    placeholder="Enter your password"
+                    disabled={isLoading}
+                    aria-invalid={errors.password ? "true" : "false"}
+                    aria-describedby={errors.password ? "password-error" : undefined}
+                  />
+                  <button
+                    type="button"
+                    onClick={toggleShowPassword}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    disabled={isLoading}
+                  >
+                    {showPassword ? "👁️" : "👁️‍🗨️"}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p id="password-error" className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <span>⚠</span>
+                    {errors.password}
+                  </p>
+                )}
+                <p className="mt-2">
+                  <a
+                    href="/forgot-password"
+                    className="text-sm text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:underline"
+                  >
+                    Forgot password?
+                  </a>
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-gray-900 font-bold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 border-2 border-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                <span className="flex items-center justify-center gap-2">
+                  {isLoading ? (
+                    <>
+                      <span className="animate-spin">⏳</span>
+                      Signing in...
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-xl">⚡</span>
+                      Sign In
+                    </>
+                  )}
+                </span>
+              </button>
+            </form>
+
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <p className="text-center text-sm text-gray-600">
+                New to the Pokemon Universe?{" "}
+                <a
+                  href="/signin"
+                  className="text-blue-600 hover:text-blue-800 font-semibold focus:outline-none focus:underline"
+                >
+                  Create an account
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2"></div>
+        </div>
+
+        <p className="text-center mt-6 text-gray-500 text-sm">
+          <span className="inline-block animate-pulse">✨</span> Gotta catch 'em
+          all! <span className="inline-block animate-pulse">✨</span>
+        </p>
+      </div>
+    </div>
+  );
+}

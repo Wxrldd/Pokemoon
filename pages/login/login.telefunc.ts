@@ -1,47 +1,68 @@
-const argon2 = require('argon2');
-import { getPrisma } from '../../utils/getPrisma';
-import { generateToken } from '../../server/jwt';
-import { setAuthTokenCookie } from '../../server/auth-utils';
+import argon2 from "argon2";
+import { getPrisma } from "../../utils/getPrisma";
+import { generateToken } from "../../server/jwt";
+import { setAuthTokenCookie } from "../../server/auth-utils";
+import { loginServerSchema } from "../../validation/auth.schema";
+import { AUTH_ERROR_MESSAGES } from "../../utils/errorMessages";
+import { ZodError } from "zod";
 
-export async function onLogin(data: { email: string; password: string; }) {
-    console.log("LOGIN DATA", data);
+export async function onLogin(data: { email: string; password: string }) {
     try {
+        const validatedData = loginServerSchema.parse(data);
+
         const prisma = getPrisma();
 
-        // Find user by email
         const user = await prisma.user.findFirst({
             where: {
-                email: data.email,
+                email: validatedData.email,
             },
         });
 
         if (!user) {
-            return { success: false, error: "No user found !" };
+            return {
+                success: false,
+                error: AUTH_ERROR_MESSAGES.general.invalidCredentials,
+            };
         }
 
-        // Verify password
-        const isValidPassword = await argon2.verify(user.password, data.password);
-        console.log("User password hash", user.password);
-        console.log("Password to verify", data.password);
-        console.log("Is valid password", isValidPassword);
+        const isPasswordValid = await argon2.verify(user.password, validatedData.password);
 
-        if (!isValidPassword) {
-            return { success: false, error: "Invalid password !" };
+        if (!isPasswordValid) {
+            return {
+                success: false,
+                error: AUTH_ERROR_MESSAGES.general.invalidCredentials,
+            };
         }
 
-        // Generate JWT token
         const token = await generateToken(user.id, user.email);
 
-        // Set httpOnly cookie
         setAuthTokenCookie(token);
 
-        // Return user data (without password)
         const { password: _, ...userWithoutPassword } = user;
-        console.log("User logged in successfully", userWithoutPassword);
 
-        return { success: true, user: userWithoutPassword };
+        console.log("User logged in successfully:", userWithoutPassword);
+
+        return {
+            success: true,
+            user: {
+                id: userWithoutPassword.id,
+                email: userWithoutPassword.email,
+            },
+        };
     } catch (error) {
-        console.error("Error during login", error);
-        return { success: false, error: "Error during login" };
+        if (error instanceof ZodError) {
+            const firstError = error.issues[0];
+            return {
+                success: false,
+                error: firstError?.message || AUTH_ERROR_MESSAGES.general.serverError,
+            };
+        }
+
+        console.error("Error during login:", error);
+
+        return {
+            success: false,
+            error: AUTH_ERROR_MESSAGES.general.serverError,
+        };
     }
 }
