@@ -51,7 +51,7 @@ function Navbar() {
           ) : (
             <>
               <Link href="/login">Login</Link>
-              <Link href="/subscribe">Subscribe</Link>
+              <Link href="/signup">Sign Up</Link>
             </>
           )}
           <Link href="/pokedex">Pokédex</Link>
